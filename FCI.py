@@ -13,7 +13,7 @@ import pyscf
 import numpy as np
 from pyscf import tools
 from pyscf import __config__
-from utils import write_matrop, read_orbitals_from_record
+from utils import write_matrop, read_orbitals_from_record, read_header
 
 MAX_MEMORY = getattr(__config__, 'MAX_MEMORY')
 print(MAX_MEMORY)
@@ -42,14 +42,16 @@ cisolver.conv_tol = 1e-9
 e, fcivec = cisolver.kernel()
 
 
-
 # 
 dm1 = cisolver.make_rdm1(fcivec, myhf.mo_coeff.shape[0], myhf.mol.nelec)
+sdm1a, sdm1b = cisolver.make_rdm1s(fcivec, myhf.mo_coeff.shape[0], myhf.mol.nelec)
+sdm1 = sdm1a-sdm1b
 #orbitals = read_orbitals(test+'orbfile',myhf.mo_coeff.shape[0])
 orbitals = read_orbitals_from_record(args.record_file,myhf.mo_coeff.shape[0])
-
+header = read_header(args.record_file)
 
 dm_molpro = np.matmul(np.matmul(orbitals,dm1), orbitals.transpose())
+sdm_molpro = np.matmul(np.matmul(orbitals,sdm1), orbitals.transpose())
 print(f"E={e}")
 
-write_matrop(args.outfile,dm_molpro, myhf.mo_coeff.shape[0])
+write_matrop(args.outfile,dm_molpro,sdm_molpro,myhf.mo_coeff.shape[0], myhf.mol.nelec, header)

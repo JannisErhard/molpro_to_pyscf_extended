@@ -13,26 +13,45 @@ def read_orbitals(filename, norbs):
     return orbitals
 
 
+def read_header(filename):
+    header = []
+    with open(filename,'r') as f:
+        for line in f:
+            if 'ORBITALS' in line:
+                return header 
+            header.append(line)
 
-def write_matrop(fname, mat, new_dim):
+
+
+def write_matrop(fname, mat1, mat2, new_dim, nelec,header):
     '''  takes matrix, extracts upper traingale, writes it in columns of 3 into file'''
-    vector = mat[0,0]
-    for i in range(1,new_dim):
-        vector = np.append(vector, mat[:i+1,i])
+    # write header
     with open(fname, 'w') as fin:
-        fin.write('BEGIN_DATA,\n')
-        if (len(vector)%3==0):
-            for i in range(0,len(vector),3):
-                fin.write("%25.15f, %25.15f, %25.15f,\n"%(vector[i], vector[i+1], vector[i+2]))
-        if (len(vector)%3==1):
-            for i in range(0,len(vector)-3,3):
-                fin.write("%25.15f, %25.15f, %25.15f,\n"%(vector[i], vector[i+1], vector[i+2]))
-            fin.write("%25.15f,\n"%vector[-1])
-        if (len(vector)%3==2):
-            for i in range(0,len(vector)-3,3):
-                fin.write("%25.15f, %25.15f, %25.15f,\n"%(vector[i], vector[i+1], vector[i+2]))
-            fin.write("%25.15f, %25.15f,\n"%vector[-2], vector[-1])
-        fin.write('END_DATA,\n')
+        for line in header:
+            fin.write(line.replace('RHF','FCI'))
+
+    n = nelec[0]+nelec[1]
+    microheaders = [' DENSITY      CHARGE           1    1    1    '+str(n)+'    0\n', ' DENSITY      SPIN             2    1    1    '+str(n)+'    0\n']
+    print(len(microheaders))
+    for j,mat in enumerate([mat1, mat2]):
+        vector = mat[0,0]
+        for i in range(1,new_dim):
+            vector = np.append(vector, mat[:i+1,i])
+        with open(fname, 'a') as fin:
+            fin.write(microheaders[j])
+            if (len(vector)%3==0):
+                for i in range(0,len(vector),3):
+                    fin.write("%0.15E, %0.15E, %0.15E,\n"%(vector[i], vector[i+1], vector[i+2]))
+            if (len(vector)%3==1):
+                for i in range(0,len(vector)-3,3):
+                    fin.write("%0.15E, %0.15E, %0.15E,\n"%(vector[i], vector[i+1], vector[i+2]))
+                fin.write("%0.15E,\n"%vector[-1])
+            if (len(vector)%3==2):
+                for i in range(0,len(vector)-3,3):
+                    fin.write("%0.15E, %0.15E, %0.15E,\n"%(vector[i], vector[i+1], vector[i+2]))
+                fin.write("%0.15E, %0.15E,\n"%vector[-2], vector[-1])
+    with open(fname, 'a') as fin:
+        fin.write(" ---")
 
 def read_orbitals_from_record(filename, norbs):
     ''' Reads Molpro record file and parses Orbitals intpó matrix'''
