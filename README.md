@@ -16,7 +16,7 @@ This will generate two files. One called fcidump and one called orb.dat.
 Now use this script in the following way:
 
 ```python
- python3 FCI.py -rf Test_1/orb.dat -ff Test_1/fcidump -of Test_1/dm_2.dat
+python3 FCI.py -rf Test_3/orb.dat -ff Test_3/fcidump -of Test_3/dm_2.dat
 ```
 
 This will generate a density matrix that is compatible with molpro from a PySCF FCI calulation.
@@ -27,3 +27,5 @@ This will generate a density matrix that is compatible with molpro from a PySCF 
 Tested Successfuly so far for:
 1. Be sto3g FCI
 2. Be aug-cc-pvdz FCI
+3. Chain of 3 Be atoms sto3g FCI
+4. Tested for Li sto-3g
