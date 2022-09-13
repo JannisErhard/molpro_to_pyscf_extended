@@ -38,7 +38,7 @@ myhf.run()
 
 # create a cisolver object based on the SCF object an execute the CI algorithm
 cisolver = pyscf.fci.FCI(myhf)
-cisolver.conv_tol = 1e-9
+cisolver.conv_tol = 1e-5
 e, fcivec = cisolver.kernel()
 
 
@@ -46,7 +46,6 @@ e, fcivec = cisolver.kernel()
 dm1 = cisolver.make_rdm1(fcivec, myhf.mo_coeff.shape[0], myhf.mol.nelec)
 sdm1a, sdm1b = cisolver.make_rdm1s(fcivec, myhf.mo_coeff.shape[0], myhf.mol.nelec)
 sdm1 = sdm1a-sdm1b
-#orbitals = read_orbitals(test+'orbfile',myhf.mo_coeff.shape[0])
 orbitals = read_orbitals_from_record(args.record_file,myhf.mo_coeff.shape[0])
 header = read_header(args.record_file)
 

@@ -33,7 +33,6 @@ def write_matrop(fname, mat1, mat2, new_dim, nelec,header):
     n = nelec[0]+nelec[1]
     excess = nelec[0]-nelec[1]
     microheaders = [' DENSITY      CHARGE           1    1    1    '+str(n)+'    '+str(excess)+'\n', ' DENSITY      SPIN             2    1    1    '+str(n)+'    '+str(excess)+'\n']
-    print(len(microheaders))
     for j,mat in enumerate([mat1, mat2]):
         vector = mat[0,0]
         for i in range(1,new_dim):
